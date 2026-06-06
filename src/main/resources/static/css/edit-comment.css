@@ -1,0 +1,108 @@
+:root {
+    --bg: #0b0f12;      /* Background Utama */
+    --card: #0f1720;    /* Background Kartu */
+    --muted: #9aa4af;   /* Teks Abu-abu */
+    --input: #111722;   /* Warna Input */
+    --accent: #e03b3b;  /* Merah Aksen */
+    --text: #e6eef3;    /* Putih Tulang */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+    /* Membuat Form di Tengah Layar (Center) */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* KARTU FORM */
+.container {
+    background-color: var(--card);
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--input);
+    border-top: 4px solid var(--accent); 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    
+    width: 100%;
+    max-width: 500px; /* Batas lebar biar rapi */
+}
+
+h2 {
+    color: var(--accent);
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--input);
+    padding-bottom: 1rem;
+}
+
+/* FORM ELEMENTS */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+textarea {
+    background-color: var(--input);
+    color: var(--text);
+    border: 1px solid #333;
+    padding: 15px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical; /* User bisa tarik tinggi-rendah */
+    min-height: 150px; /* Tinggi minimal */
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(224, 59, 59, 0.2);
+}
+
+
+.button-group {
+    display: flex;
+    justify-content: flex-end; 
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-save {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: opacity 0.2s;
+}
+
+.btn-cancel {
+    background-color: transparent;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+}

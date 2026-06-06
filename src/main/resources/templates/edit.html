@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Comment</title>
+    <link href="/css/edit-comment.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Edit Comment</h2>
+        
+        <form th:action="@{/comments/{id}/update(id=${comment.id})}" method="post">
+            
+            <label>Edit your comment:</label>
+            
+            <textarea name="content" th:text="${comment.content}" required></textarea>
+            
+            <div class="button-group">
+                <a th:href="@{/memes/{id}(id=${comment.memeId})}" class="btn-cancel">Batal</a>
+                
+                <button type="submit" class="btn-save">Save</button>
+            </div>
+            
+        </form>
+    </div>
+
+</body>
+</html>

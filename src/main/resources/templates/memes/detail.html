@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Detail</title>
+
+    <link th:href="@{/css/feed.css}" rel="stylesheet">
+</head>
+<body>
+
+    <header id="topbar">
+        <div class="topbar-brand">The Meme Arena</div>
+        <nav class="nav-tabs">
+            <button class="tab-button">Newly Added</button>
+            <!-- <button class="tab-button inactive">Top 10 Memes</button> -->
+        </nav>
+        <div class="top-actions">
+            <a th:href="@{/dashboard}" class="btn-profile">Profile</a>
+        </div>
+    </header>
+
+    <div id="layout">
+        <aside id="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-heading">Navigation</h3>
+                <a th:href="@{/memes}" class="sidebar-link">🏠 Back to Feed</a>
+                <a th:href="@{/memes/upload}" class="sidebar-link">➕ Upload</a>
+            </div>
+            <hr class="divider-hr">
+            <div>
+                <h3 class="sidebar-heading">Categories</h3>
+                <a th:href="@{/memes}" class="category-link" th:classappend="${selectedCategory == null} ? 'active' : ''">All Categories</a>
+                <a th:each="cat : ${categories}" th:href="@{/memes(category=${cat})}" class="category-link" th:classappend="${selectedCategory == cat} ? 'active' : ''" th:text="${cat}">Category</a>
+            </div>
+        </aside>
+
+        <main id="feed">
+            
+            <div th:if="${meme} == null" style="color:var(--muted); padding: 20px;">
+                Meme not found. <a th:href="@{/memes}">Back to feed</a>
+            </div>
+
+            <article class="meme-card" th:if="${meme} != null">
+                <div class="meme-header">
+                    <div class="meme-author">
+                        <div class="meme-avatar" th:text="${meme.username != null ? meme.username.substring(0,1).toUpperCase() : 'U'}">U</div>
+                        <div class="meme-meta">
+                            <div class="meme-username" th:text="${meme.username}">username</div>
+                            <div class="meme-time" th:text="${meme.createdAt}">time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meme-image-container">
+                    <video th:if="${#strings.endsWith(meme.imageUrl, '.mp4') or #strings.endsWith(meme.imageUrl, '.webm')}" controls muted loop playsinline>
+                        <source th:src="@{${meme.imageUrl}}" th:type="${#strings.endsWith(meme.imageUrl,'.mp4')} ? 'video/mp4' : 'video/webm'" />
+                        Your browser does not support the video tag.
+                    </video>
+                    <img th:if="${!(#strings.endsWith(meme.imageUrl, '.mp4') or #strings.endsWith(meme.imageUrl, '.webm'))}" th:src="@{${meme.imageUrl}}" alt="meme image" />
+                </div>
+
+                <div class="meme-content">
+                    <div class="meme-title" th:text="${meme.title}">Title</div>
+                    <div class="meme-info" style="margin-top:8px; font-size:0.95rem; color:var(--muted);">
+                        <div th:if="${meme.category != null}" class="meme-category" style="margin-bottom:4px;">
+                            <strong style="color:var(--text); font-weight:600;">Category:</strong>
+                            <a th:href="@{/memes(category=${meme.category})}" class="category-link" th:text="${meme.category}" style="margin-left:6px;">Category</a>
+                        </div>
+                        <div th:if="${tags != null and !tags.isEmpty()}" class="meme-tags">
+                            <strong style="color:var(--text); font-weight:600;">Tags:</strong>
+                            <span th:each="t,iterStat : ${tags}" style="margin-left:6px;">
+                                <a href="#" class="topic-link" th:text="${t}">#tag</a><span th:if="${!iterStat.last}">, </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meme-footer">
+                    <form th:action="@{/memes/{id}/vote(id=${meme.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="meme-action" style="cursor:pointer;" 
+                                th:classappend="${meme.voteCount != null && meme.voteCount > 0} ? ' active' : ''">
+                            🔥 <span class="vote-count" th:text="${meme.voteCount != null ? meme.voteCount : 0}">0</span>
+                        </button>
+                    </form>
+                    
+                    <button class="meme-action">
+                        💬 <span class="comment-count" th:text="${comments != null ? comments.size() : 0}">0</span>
+                    </a>
+                </div>
+            </article>
+
+
+            <section class="meme-detail-section" th:if="${meme} != null" style="margin-top:12px;">
+                <div class="detail-row" style="padding:12px; background:var(--card); border-radius:8px;">
+                    
+                    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+                        <div><strong>Votes:</strong> <span th:text="${meme.voteCount != null ? meme.voteCount : 0}">0</span></div>
+                        <div><strong>Uploaded:</strong> <span th:text="${meme.createdAt}">time</span></div>
+                        <div><strong>Comments:</strong> <span th:text="${comments != null ? comments.size() : 0}">0</span></div>
+                    </div>
+                    
+                    <div style="margin-top:12px; display:flex; gap:12px; flex-wrap:wrap;">
+                        <div>
+                            <strong>Category:</strong>
+                            <span th:if="${meme.category != null}">
+                                <a th:href="@{/memes(category=${meme.category})}" class="category-link" th:text="${meme.category}">Category</a>
+                            </span>
+                            <span th:if="${categories != null}">
+                                <a th:each="cat : ${categories}" th:href="@{/memes(category=${cat})}" class="category-link" th:classappend="${selectedCategory == cat} ? 'active' : ''" th:text="${cat}">Category</a>
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>Tags:</strong>
+                            <span th:if="${tags != null}">
+                                <a th:each="t : ${tags}" href="#" class="topic-link" th:text="${t}">#tag</a>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="comment-section">
+
+                        <!-- Moderator power -->
+                        <div th:if="${session.user != null and session.user.role == 'moderator'}" class="mod-panel">
+                            <h4 class="mod-title">Moderator Control</h4>
+                            <form th:action="@{/moderator/meme/{id}/toggle-comments(id=${meme.id})}" method="post">
+                                <span class="mod-status">
+                                    Status: <strong th:text="${meme.commentsEnabled ? 'OPEN' : 'LOCKED'}">Status</strong>
+                                </span>
+                                <button type="submit" name="enabled" th:value="${!meme.commentsEnabled}" class="btn-toggle">
+                                    <span th:text="${meme.commentsEnabled ? 'Lock Comments' : 'Unlock Comments'}">Toggle</span>
+                                </button>
+                            </form>
+                        </div>
+                        <!-- Moderator power -->
+
+                        <div style="margin-bottom: 15px; margin-top: 15px;">
+                            <strong>Comments</strong>
+                        </div>
+
+                        <!-- Moderator power -->
+                            <div th:if="${session.user != null} and (${meme.commentsEnabled} or ${session.user.role == 'moderator'})">
+                                <form th:action="@{/memes/{id}/comment(id=${meme.id})}" method="post">
+                                    <textarea name="content" rows="2" placeholder="Write a comment..." class="comment-input" required></textarea>
+                                    <button type="submit" class="btn-send">Send</button>
+                                </form>
+                            </div>
+
+                            <div th:if="${!meme.commentsEnabled} and ${session.user != null and session.user.role != 'moderator'}" class="msg-disabled">
+                                Comments have been disabled by Moderator.
+                            </div>
+                        <!-- Moderator power -->
+
+                        <div th:if="${session.user == null}" style="margin-top: 10px;">
+                            <a href="/login" class="msg-login">Login</a> to write a comment.
+                        </div>
+
+                        <div class="comment-list">
+                            <div th:if="${comments == null or #lists.isEmpty(comments)}" style="color:var(--muted);">No comments yet.</div>
+                            
+                            <div th:each="c : ${comments}" class="comment-item">
+                                <div class="comment-header">
+                                    <div>
+                                        <span class="comment-user" th:text="${c.username}">user</span>
+                                        <span class="comment-time" th:text="${c.createdAt}">time</span>
+                                    </div>
+                                    
+                                    <div class="comment-actions">
+                                        <a th:if="${session.user != null and session.user.username == c.username} and ${meme.commentsEnabled}" 
+                                           th:href="@{/comments/{id}/edit(id=${c.id})}" 
+                                           class="btn-edit">
+                                           Edit
+                                        </a>
+                                        <!-- Moderator power -->
+                                        <form th:if="${session.user != null and (session.user.username == c.username or session.user.role == 'moderator')}" 
+                                              th:action="@{/comments/{id}/delete(id=${c.id})}" 
+                                              method="post" 
+                                              onsubmit="return confirm('Delete this comment?');"
+                                              class="btn-delete-form">
+                                            <button type="submit" class="btn-delete">Delete</button>
+                                        </form>
+                                        <!-- Moderator power -->
+                                         
+                                    </div>
+                                </div>
+                                <div style="color:var(--muted);" th:text="${c.content}">Content</div>
+                            </div>
+                        </div>
+
+                    </div> </div>
+            </section>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/upload.css}" rel="stylesheet" />
+    <title>Upload Meme</title>
+</head>
+<body>
+    <div id="layout">
+        <main id="feed">
+            <div class="upload-container-centered">
+                <div class="upload-form-wrapper">
+                    <h2 style="margin:0 0 16px 0;">Upload Meme</h2>
+                    <form class="upload-form" th:action="@{/memes/upload}" method="post" enctype="multipart/form-data">
+                        <th:block th:if="${_csrf != null}">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        </th:block>
+
+                        <!-- Back to Feed button -->
+                        <div style="margin-bottom:12px;">
+                            <a th:href="@{/memes}" class="btn-profile">← Back to Feed</a>
+                        </div>
+
+                        <div>
+                            <label>Title</label>
+                            <input class="input" type="text" name="title" required />
+                        </div>
+
+                        <div>
+                            <label>Category</label>
+                            <select class="input select" name="category" required>
+                                <option value="">Select a category...</option>
+                                <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}">Category</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Tags (select multiple)</label>
+                            <select class="input select" name="tags" required>
+                                <option value>Select one or more tags...</option>
+                                <option th:each="tag : ${tags}" th:value="${tag}" th:text="${tag}">Tag</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>File (image/video)</label>
+                            <input id="file" class="input" type="file" name="file" accept="image/*,video/*" required />
+                        </div>
+
+                        <div class="preview" id="preview">
+                            <video id="video-preview" controls muted loop playsinline style="display:none; max-width:100%; height:auto;"></video>
+                            <img id="file-preview" src="#" alt="preview" style="display:none; max-width:100%; height:auto;" />
+                            <div id="preview-text">Drop or choose a file to preview</div>
+                        </div>
+
+                        <div class="submit-row">
+                            <button type="submit" class="btn-submit">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file');
+        const imgPreview = document.getElementById('file-preview');
+        const videoPreview = document.getElementById('video-preview');
+        const previewText = document.getElementById('preview-text');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                const f = e.target.files[0];
+                if (!f) return;
+                const url = URL.createObjectURL(f);
+                const isVideo = f.type.startsWith('video/');
+                if (isVideo) {
+                    imgPreview.style.display = 'none';
+                    videoPreview.src = url;
+                    videoPreview.style.display = 'block';
+                    previewText.style.display = 'none';
+                } else if (f.type.startsWith('image/')) {
+                    videoPreview.style.display = 'none';
+                    imgPreview.src = url;
+                    imgPreview.style.display = 'block';
+                    previewText.style.display = 'none';
+                } else {
+                    videoPreview.style.display = 'none';
+                    imgPreview.style.display = 'none';
+                    previewText.style.display = 'block';
+                    previewText.textContent = 'Preview not available for this file type';
+                }
+            });
+        }
+    </script>
+    <!-- Flash popup if uploadStatus present (set by controller via flash attribute) -->
+    <th:block th:if="${uploadStatus != null}">
+        <div id="flash" class="flash-toast" th:classappend="${uploadStatus == 'success'} ? ' success' : ' error'" th:text="${uploadStatus == 'success'} ? 'Upload successful' : 'Upload failed'"></div>
+        <script>
+            setTimeout(()=>{ const el = document.getElementById('flash'); if(el) el.style.display='none'; }, 10000);
+        </script>
+    </th:block>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>Chart Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="/css/moderator.css" rel="stylesheet"/>
+</head>
+<body>
+  <div class="navbar"><h2>Chart Report</h2><div><a href="/moderator/reports" class="logout-btn">Back</a></div></div>
+  <div class="container">
+    <h1>Charts</h1>
+
+    <section>
+        <h2>Popularitas Kategori</h2>
+        <div class="chart-container">
+          <canvas id="categoryPopularity"></canvas>
+        </div>
+    </section>
+
+    <section>
+      <h2>Votes per Kategori</h2>
+      <div class="chart-container">
+        <canvas id="categoryVotes"></canvas>
+      </div>
+    </section>
+
+    <section>
+      <h2>Top 10 Uploader</h2>
+      <div class="chart-container">
+        <canvas id="topUploaders" height="120"></canvas>
+      </div>
+    </section>
+
+    <section>
+      <h2>Top 10 Meme Trending</h2>
+      <div class="chart-container">
+        <canvas id="trendingMemes" height="120"></canvas>
+      </div>
+    </section>
+
+    <section>
+      <h2>User-user paling aktif</h2>
+      <div class="chart-container">
+        <canvas id="activeUsers" height="120"></canvas>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // helper: bar chart
+    function drawBar(id, labels, data, label) {
+      new Chart(document.getElementById(id), {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{ label: label, data: data }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
+
+    // Popularitas Kategori
+    fetch('/api/reports/category-popularity').then(r=>r.json()).then(data=>{
+      const labels = Object.keys(data);
+      const values = Object.values(data);
+      drawBar('categoryPopularity', labels, values, 'Total Memes');
+    });
+
+    // Votes per Kategori
+    fetch('/api/reports/category-votes').then(r=>r.json()).then(data=>{
+      const labels = Object.keys(data);
+      const values = Object.values(data);
+      drawBar('categoryVotes', labels, values, 'Total Votes');
+    });
+
+    // Top Uploaders
+    fetch('/api/reports/top-uploaders?limit=10').then(r=>r.json()).then(list=>{
+      const labels = list.map(i=>i.username);
+      const values = list.map(i=>i.totalUploaded);
+      drawBar('topUploaders', labels, values, 'Uploads');
+    });
+
+    // Meme2 trending
+    fetch('/api/reports/trending-memes?limit=10').then(r=>r.json()).then(list=>{
+      const labels = list.map(i=>i.title);
+      const values = list.map(i=>i.votes);
+      drawBar('trendingMemes', labels, values, 'Votes');
+    });
+
+    // User2 aktif
+    fetch('/api/reports/active-users?limit=10').then(r=>r.json()).then(list=>{
+      const labels = list.map(i=>i.username);
+      const values = list.map(i=>i.activityScore);
+      drawBar('activeUsers', labels, values, 'Activity Score');
+    });
+  </script>
+</body>
+</html>

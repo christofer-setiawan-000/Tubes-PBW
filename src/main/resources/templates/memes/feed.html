@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/feed.css}" rel="stylesheet">
+    <title>Meme Feed</title>
+</head>
+<body>
+
+    <header id="topbar">
+        <div class="topbar-brand">The Meme Arena</div>
+        <nav class="nav-tabs">
+            <button class="tab-button">Newly Added</button>
+            <!-- <button class="tab-button inactive">Top 10 Memes</button> -->
+        </nav>
+        <div class="top-actions">
+            <a th:href="@{/dashboard}" class="btn-profile">Profile</a>
+        </div>
+    </header>
+
+    <div id="layout">
+        <aside id="sidebar">
+            <div class="sidebar-section">
+                <h3 class="sidebar-heading">Navigation</h3>
+                <a href="#" class="sidebar-link active">🏠 Home</a>
+                <a th:href="@{/trending}" class="sidebar-link active">🔥 Trending</a>
+                <a th:href="@{/memes/upload}" class="sidebar-link">➕ Upload</a>
+            </div>
+            <hr class="divider-hr">
+            <div>
+                <h3 class="sidebar-heading">Categories</h3>
+                <a th:href="@{/memes}" class="category-link" th:classappend="${selectedCategory == null} ? 'active' : ''">All Categories</a>
+                <a th:each="cat : ${categories}" th:href="@{/memes(category=${cat})}" class="category-link" th:classappend="${selectedCategory == cat} ? 'active' : ''" th:text="${cat}">Category</a>
+            </div>
+        </aside>
+
+        <main id="feed">
+            <!-- Flash popup if uploadStatus present -->
+            <div th:if="${#lists.isEmpty(memes)}" style="color:var(--muted);">No memes yet. Be the first to <a th:href="@{/memes/upload}">upload</a> one!</div>
+
+            <div th:each="meme : ${memes}">
+                <article class="meme-card">
+                    <div class="meme-header">
+                        <div class="meme-author">
+                            <div class="meme-avatar" th:text="${meme.username != null ? meme.username.substring(0,1).toUpperCase() : 'U'}">U</div>
+                            <div class="meme-meta">
+                                <div class="meme-username" th:text="${meme.username}">username</div>
+                                <div class="meme-time" th:text="${meme.createdAt}">time</div>
+                            </div>
+                        </div>
+                        <div>
+                            <a th:href="@{/memes/{id}(id=${meme.id})}" style="color:var(--muted); text-decoration:none;">Details</a>
+                        </div>
+                    </div>
+
+                    <div class="meme-image-container">
+                        <video th:if="${#strings.endsWith(meme.imageUrl, '.mp4') or #strings.endsWith(meme.imageUrl, '.webm')}" controls muted loop playsinline>
+                            <source th:src="@{${meme.imageUrl}}" th:type="${#strings.endsWith(meme.imageUrl,'.mp4')} ? 'video/mp4' : 'video/webm'" />
+                            Your browser does not support the video tag.
+                        </video>
+                        <img th:if="${!(#strings.endsWith(meme.imageUrl, '.mp4') or #strings.endsWith(meme.imageUrl, '.webm'))}" th:src="@{${meme.imageUrl}}" alt="meme image" />
+                    </div>
+
+                    <div class="meme-content">
+                        <div class="meme-title" th:text="${meme.title}">Title</div>
+                        <div class="meme-info" style="margin-top:8px; font-size:0.95rem; color:var(--muted);">
+                            <div th:if="${meme.category != null}" class="meme-category" style="margin-bottom:4px;">
+                                <strong style="color:var(--text); font-weight:600;">Category:</strong>
+                                <a th:href="@{/memes(category=${meme.category})}" class="category-link" th:text="${meme.category}" style="margin-left:6px;">Category</a>
+                            </div>
+                            <div th:if="${memeTags.get(meme.id) != null and !memeTags.get(meme.id).isEmpty()}" class="meme-tags">
+                                <strong style="color:var(--text); font-weight:600;">Tags:</strong>
+                                <span th:each="tag,iterStat : ${memeTags.get(meme.id)}" style="margin-left:6px;">
+                                    <a href="#" class="topic-link" th:text="${tag}">tag</a><span th:if="${!iterStat.last}">, </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                   <div class="meme-footer">
+                        
+                        <form th:action="@{/memes/{id}/vote(id=${meme.id})}" method="post" style="display:inline;">
+                            <button type="submit" class="meme-action" style="cursor: pointer;"
+                                    th:classappend="${meme.voteCount != null && meme.voteCount > 0} ? ' active' : ''">
+                                👍 <span class="vote-count" th:text="${meme.voteCount != null ? meme.voteCount : 0}">0</span>
+                            </button>
+                        </form>
+
+                        <a class="meme-action" th:href="@{/memes/{id}(id=${meme.id})}">
+                            💬 <span class="comment-count" th:text="${meme.commentCount != null ? meme.commentCount : 0}">0</span>
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

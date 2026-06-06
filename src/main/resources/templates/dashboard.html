@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Basic app stylesheet (uses static resources under /static/css) -->
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
+</head>
+<body>
+    <header id="topbar">
+        <div class="topbar-brand">The Meme Arena</div>
+    </header>
+    
+    <div class="container">
+        <header>
+            <div class="brand">Dashboard</div>
+            <nav class="nav">
+                <a class="btn" th:href="@{/trending}">Trending</a>
+                <a class="btn" th:href="@{/memes}">Feed</a>
+                <a class="btn" th:href="@{/memes/upload}">Upload</a>
+                <a class="btn" th:if="${user != null and user.role == 'moderator'}" th:href="@{/moderator}">Moderator</a>
+                <a class="btn" th:href="@{/logout}">Logout</a>
+            </nav>
+        </header>
+
+        <section class="profile">
+            <div class="avatar" th:text="${user.name != null} ? ${user.name.substring(0,1)} : 'U'">U</div>
+            <div class="meta">
+                <h2 th:text="${user.name}">User Name</h2>
+                <p><strong>Username:</strong> <span th:text="${user.username}">username</span></p>
+                <p><strong>Role:</strong> <span th:text="${user.role}">role</span></p>
+                <div class="actions">
+                </div>
+            </div>
+        </section>
+
+        <div class="cards">
+            <div class="card activity-feed">
+                <h3>Your Activity</h3>
+                <div th:if="${#lists.isEmpty(userMemes)}" style="color:var(--muted); padding: 16px;">
+                    No memes yet. <a th:href="@{/memes/upload}">Upload your first meme!</a>
+                </div>
+                <div th:if="${!#lists.isEmpty(userMemes)}" class="mini-feed">
+                    <div th:each="meme : ${userMemes}" class="mini-meme-card">
+                        <div class="mini-meme-header">
+                            <div class="mini-meme-info">
+                                <div class="mini-meme-title" th:text="${meme.title}">Title</div>
+                                <div class="mini-meme-time" th:text="${meme.createdAt}">time</div>
+                            </div>
+                            <a th:href="@{/memes/{id}(id=${meme.id})}" class="mini-meme-link">View</a>
+                        </div>
+                        <div class="mini-meme-preview">
+                            <video th:if="${#strings.endsWith(meme.imageUrl, '.mp4') or #strings.endsWith(meme.imageUrl, '.webm')}" controls muted loop playsinline style="max-width: 100%; height: 150px; object-fit: cover;">
+                                <source th:src="@{${meme.imageUrl}}" th:type="${#strings.endsWith(meme.imageUrl,'.mp4')} ? 'video/mp4' : 'video/webm'" />
+                            </video>
+                            <img th:if="${!(#strings.endsWith(meme.imageUrl, '.mp4') or #strings.endsWith(meme.imageUrl, '.webm'))}" th:src="@{${meme.imageUrl}}" alt="meme" style="max-width: 100%; height: 150px; object-fit: cover; border-radius: 6px;" />
+                        </div>
+                        <div class="mini-meme-meta">
+                            <span th:if="${meme.category != null}" class="mini-meta-item">📂 <span th:text="${meme.category}">category</span></span>
+                            <span class="mini-meta-item">👍 <span th:text="${meme.voteCount != null ? meme.voteCount : 0}">0</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Account</h3>
+                <p>Email: <span th:text="${user.email}">user@example.com</span></p>
+                <p>Full name: <span th:text="${user.name}">Full name</span></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

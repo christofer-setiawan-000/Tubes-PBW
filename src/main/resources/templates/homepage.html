@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending Memes - Meme Voting Arena</title>
+    <link rel="stylesheet" href="/css/feed.css">
+    <style>
+        .btn-primary{ 
+            background:var(--accent); 
+            color:white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: 4px; 
+        }
+
+        .btn-secondary{
+            margin-left: 16px;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 4px; 
+            color: var(--muted);
+        }
+        
+        .meme-card {
+            position: relative;
+        }
+
+        #feed {
+            flex: 1;
+            display: grid;grid-template-columns: 1fr; 
+            height: auto; 
+            min-height: calc(100vh - 100px);
+            padding: 20px;
+        }
+
+        .muted-text{
+            color: var(--muted);
+            text-decoration: none;
+            height: 20px;
+        }
+
+        .width-100{ 
+            width: 100%; 
+            display: flex;
+            align-items: center;
+        } 
+        
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .rank-badge {
+            position: absolute;
+            color: white;
+            background-color: black;
+            padding: 8px 12px;
+            font-weight: bold;
+            border-radius: 10px 0;
+        }
+
+        .gold{ background-color: gold; }
+
+        .silver{ background-color: silver; }
+
+        .bronze{ background-color: #ce8946; }
+    </style>
+</head>
+<body>
+    <header id="topbar">
+        <div class="topbar-brand">The Trending Arena</div>
+        <div class="top-actions">
+            <nav th:if="${session.user == null}">
+                <a th:href="@{/login}" class="btn-secondary">Sign In</a>
+                <a th:href="@{/register}" class="btn-primary">Register</a>
+            </nav>
+            <div th:if="${session.user != null}">
+                <a th:href="@{/dashboard}" class="btn-profile">Profile</a>
+            </div>
+        </div>
+        
+    </header>
+
+    <main id="feed">
+        <div th:if="${trendingMemes == null or trendingMemes.empty}" class="muted-text width-100">
+            <p>
+                No trending memes found. Be the first to 
+                <a th:if="${session.user != null}" th:href="@{/memes/upload}">upload</a> 
+                <a th:if="${session.user == null}" th:href="@{/login}">upload</a> 
+                one!
+            </p>
+        </div>
+        
+        <div th:unless="${trendingMemes == null or trendingMemes.empty}" class="trending-grid">
+            <div class="muted-text width-100">
+                <p>Wanna see other memes??</p> 
+                <a th:if="${session.user != null}" th:href="@{/memes}" class="btn-secondary">Browse All Memes</a>
+                <a th:if="${session.user == null}" th:href="@{/login}" class="btn-secondary">Browse All Memes</a>
+            </div>
+            <div th:each="meme, stat : ${trendingMemes}">
+                <article class="meme-card">
+                    <div class="rank-badge" th:classappend="(${stat.index == 0} ? 'gold' : 
+                                                            (${stat.index == 1} ? 'silver' : 
+                                                            (${stat.index == 2} ? 'bronze' : '')))">
+                        <span>#</span>
+                        <span th:text="${stat.index + 1}">1</span>
+                    </div>
+
+                    <div class="meme-header">
+                        <div></div>
+                        <div th:if="${session.user != null}">
+                            <a th:href="@{/memes/{id}(id=${meme.id})}" style="color:var(--muted); text-decoration:none;">Details</a>
+                        </div>
+                        
+                    </div>
+
+                    <div class="meme-image-container">
+                        <video th:if="${#strings.endsWith(meme.imageUrl, '.mp4') or #strings.endsWith(meme.imageUrl, '.webm')}" controls muted loop playsinline>
+                            <source th:src="@{${meme.imageUrl}}" th:type="${#strings.endsWith(meme.imageUrl,'.mp4')} ? 'video/mp4' : 'video/webm'" />
+                            Your browser does not support the video tag.
+                        </video>
+                        <img th:if="${!(#strings.endsWith(meme.imageUrl, '.mp4') or #strings.endsWith(meme.imageUrl, '.webm'))}" th:src="@{${meme.imageUrl}}" alt="meme image" />
+                    </div>
+                    
+                    <div class="meme-content">
+                        <div class="meme-title" th:text="${meme.title}">Funny Cat Meme</div>
+                        <div class="meme-caption" th:text="'by ' + ${meme.username}">by john_doe</div>
+                        <div class="meme-caption" th:text="${meme.caption}">Caption</div>
+                    </div>
+                    
+                    <div class="meme-footer">
+                        <div class="meme-action">
+                            <span>👍</span>
+                            <span th:text="${meme.voteCount}">1,234</span>
+                        </div>
+                        <div class="meme-action">
+                            <span>💬</span>
+                            <span th:text="${meme.commentCount}">45</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

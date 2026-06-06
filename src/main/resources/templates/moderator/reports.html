@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard Reports</title>
+  <link href="/css/moderator.css" rel="stylesheet"/>
+</head>
+<body>
+  <div class="navbar">
+    <h2>Dashboard Reports</h2>
+    <div><a href="/moderator" class="logout-btn">Back</a></div>
+  </div>
+  <div class="container">
+    <h1>Laporan & Statistik</h1>
+    <p>Gunakan link-link dibawah ini untuk melihat chart atau download laporan full.</p>
+    <div class="menu-grid">
+      <div class="card">
+        <h3>Charts</h3>
+        <p>Charts untuk kategori, top uploaders, meme trending, user aktif.</p>
+        <a href="/moderator/reports/chart" class="btn">Buka chart</a>
+      </div>
+      <div class="card">
+        <h3>Laporan PDF</h3>
+        <p>Download full laporan moderator (Top uploaders, kategori, meme trending).</p>
+        <a href="/moderator/reports/pdf" class="btn">Buka PDF</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

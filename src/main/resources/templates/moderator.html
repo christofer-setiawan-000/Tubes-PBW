@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderator Page</title>
+    <link href="/css/moderator.css" rel="stylesheet">
+</head>
+<body>
+   <div class="navbar">
+        <h2>Moderator Panel</h2>
+        <a href="logout" class="logout-btn">Logout</a>
+   </div>
+
+   <div class="hero">
+        <div th:if="${user != null}">
+            <h1> Welcome back, <span th:text="${user.name}"></span></h1>
+            <p>You are logged in as: <strong th:text="${user.username}"></strong></p>
+        </div>
+
+        <div th:if="${user == null}">
+                <h1>Session end</h1>
+                <p>Please login again to access the panel</p><br>
+                <a href="/login">Back to login page</a>
+        </div>
+
+        <div class="container" th:if="${user != null}">
+            <div class="card">
+                <h3>Manage Users</h3>
+                <p>Manage user list & delete users</p>
+                <a href="/moderator/users" class="btn"> Manage Users</a>
+            </div>
+
+            <div class="card">
+                <h3>Report</h3>
+                <p>Meme popularity Graphics & Download report in PDF format</p>
+                <a href="/moderator/reports" class="btn">Manage Report</a>
+            </div>
+
+            
+            <div class="card">
+                <h3>Meme Review</h3>
+                <p>Meme main page, close comment & delete content</p>
+                <a href="/memes" class="btn">Meme Review</a>
+            </div>
+
+            
+            <div class="card">
+                <h3>Public Dashboard</h3>
+                <p>Main Dashboard</p>
+                <a href="/dashboard" class="btn"> Dashboard</a>
+            </div>
+        </div>
+   </div>
+</body>
+</html>

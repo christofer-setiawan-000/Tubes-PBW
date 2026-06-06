@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/css/auth-dark.css" />
+
+</head>
+<body>
+    <main class="auth-card">
+        <header class="auth-header">
+            <h1 class="auth-title">Buat akun</h1>
+            <p class="auth-sub">Mulai membuat meme dan berinteraksi dengan komunitas.</p>
+        </header>
+
+        <section>
+            <form class="auth-form" method="post" action="register" th:object="${user}">
+                <div class="form-row">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" th:field="*{username}" class="form-control" />
+                    <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+                </div>
+
+                <div class="form-row">
+                    <label for="email">Email</label>
+                    <input id="email" type="email" th:field="*{email}" class="form-control" placeholder="email@example.com" />
+                    <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                </div>
+
+                <div class="form-row">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" th:field="*{password}" class="form-control" />
+                    <span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+                </div>
+
+                <div class="form-row">
+                    <label for="confirmpassword">Confirm Password</label>
+                    <input id="confirmpassword" type="password" th:field="*{confirmpassword}" class="form-control" />
+                    <span class="error" th:if="${#fields.hasErrors('confirmpassword')}" th:errors="*{confirmpassword}"></span>
+                    <span class="error" th:if="${passwordError}" th:text="${passwordError}"></span>
+                </div>
+
+                <div class="form-row">
+                    <label for="role">Role</label>
+                    <select id="role" th:field="*{role}" class="form-control">
+                        <option value="user">User</option>
+                        <option value="moderator">Moderator</option>
+                    </select>
+                    <span class="error" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></span>
+                </div>
+
+                <div class="form-row">
+                    <label for="name">Name</label>
+                    <input id="name" type="text" th:field="*{name}" class="form-control" />
+                    <span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                </div>
+
+                <div class="form-row">
+                    <button class="btn btn-primary" type="submit">Register</button>
+                </div>
+            </form>
+
+            <a class="muted-link" href="/login">Sudah punya akun? Masuk</a>
+        </section>
+    </main>
+</body>
+</html>

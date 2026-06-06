@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Voting Arena</title>
+    <link rel="stylesheet" href="/css/auth-dark.css">
+    <style>
+        body{
+            justify-content: end;
+            padding: 0%;
+        }
+
+        img{
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .gradient{
+            position: absolute;
+            z-index: 1;
+            background-image: linear-gradient(to left, var(--bg), transparent);
+            width: 75%;
+            height: 100%;
+        }
+
+        .hero{ 
+            position: absolute;
+            z-index: 2;
+            display: flex;
+            align-content: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 50%;
+            height: 50%;
+        }
+
+        h1{ color: var(--accent); }
+
+        p{ color: var(--muted);}
+
+        a{ text-decoration: none; }
+
+        .hero-buttons{ 
+            width: 200px;
+        }
+        
+        .hero-buttons div:last-child{
+            margin-top: 20px;
+        }
+
+        .btn-primary{
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 4px; 
+        }
+
+        .btn-secondary{
+            margin-left: 16px;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 4px; 
+            background: var(--muted);
+            color: var(--bg);
+        }
+    </style>
+</head>
+<body>
+    <img src="img/Gemini_Generated_Image_sq0usssq0usssq0u.png" alt="">
+    <div class="gradient"></div>
+    <section class="hero">
+        <h1>Welcome to Meme Voting Arena</h1>
+        <p>Create, vote, and enjoy the best memes from the community!</p>
+        <div class="hero-buttons">
+            <div>
+                <a th:href="@{/trending}" class="btn-primary">View Trending Memes</a>
+            </div>
+            <div>
+                <div th:if="${session.user != null}">
+                    <a th:href="@{/memes}" class="btn-secondary">Browse All Memes</a>
+                </div>
+                <div th:if="${session.user == null}">
+                    <a th:href="@{/login}" class="btn-secondary">Browse All Memes</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
